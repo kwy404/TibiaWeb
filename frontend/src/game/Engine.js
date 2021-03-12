@@ -35,24 +35,6 @@ class Game extends React.Component {
     console.info(`Criado por Alexandre Silva`)
     this.moverMeuPersonagem()
   }
-  animaPersonagem(x, y){
-    const oldX = this.state.posicaoBonecoX
-    const oldY = this.state.posicaoBonecoY
-    var passos = x - oldX
-    var totalYAndados = 1
-    //Pra baixo
-    if(y == oldY && oldX <= x - 1){
-        const anima = setInterval(() => {
-            this.setState({posicaoBonecoX: x})
-            this.setState({posicaoBonecoX: oldY + totalYAndados + 2})
-            if(passos == totalYAndados){
-                clearInterval(anima)
-            } else{
-                totalYAndados++
-            }
-        }, 200);
-    }
-  }
   moverMeuPersonagem(){
     const react = this
     
