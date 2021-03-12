@@ -60,7 +60,6 @@ class Game extends React.Component {
     })
     socket.on('moveChar', data => {
         const found = react.state.playersOnMap.find(e => e.player == data.player)
-        console.log(found)
         if(found){
             const id = react.state.playersOnMap.indexOf(found)
             var oldPlayersMap = react.state.playersOnMap
