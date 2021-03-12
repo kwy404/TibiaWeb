@@ -45,14 +45,18 @@ class Game extends React.Component {
     const react = this
     socket.emit("openConnect", true)
     socket.on('newUser', data => {
-        var joined = this.state.playersOnMap.concat(data);
-        react.setState({ playersOnMap: joined })
+        if(!react.state.playersOnMap.find(e => e.player == data.player)){
+            var joined = this.state.playersOnMap.concat(data);
+            react.setState({ playersOnMap: joined })
+            react.removeMe()
+        }
     })
     socket.on('myId', id => {
         react.setState({myId: id})
     })
     socket.on('loadUsers', data => {
         react.setState({playersOnMap: data})
+        react.removeMe()
     })
     socket.on('moveChar', data => {
         const found = react.state.playersOnMap.find(e => e.player == data.player)
