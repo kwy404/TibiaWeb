@@ -1,0 +1,78 @@
+.gameEngine{
+    position: fixed;
+    width: 520px;
+    height: 500px;
+    background: #000;
+    overflow: hidden;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(1.2);
+    image-rendering: pixelated;
+}
+
+.overflowEngine{
+    width: 1600px !important;
+    height: 1560px  !important;
+    position: absolute;
+    transition: 0.6s ease;
+}
+
+.gameEngine .tile{
+    position: relative;
+    width: 40px;
+    height: 39px;
+    float: left;
+    cursor: pointer;
+}
+
+.gameEngine .nameMob{
+    position: fixed;
+    color: #fff;
+    z-index: 100;
+    left: 0px;
+    transform: scale(0.9);
+    font-size: 13px;
+    margin-top: -25px;
+    text-align: centers;
+    margin-left: -75px;
+    width: 200px;
+}
+
+.gameEngine .life{
+    position: fixed;
+    width: 50px;
+    height: 2px;
+    background: rgb(49,137,53);
+    border-top: 2px solid rgb(49,137,53);
+    border-bottom: 2px solid rgb(26,113,32);
+    margin-top: -5px;
+    box-shadow: 1px 2px 1px rgba(0,0,0,.40);
+    border-radius: 0px;
+}
+
+.char:hover{
+    opacity: 0.7;
+}
+
+.water{
+    background-position: -14px -39px !important;
+}
+
+.grass{
+    background-position: 0px 0px !important;
+}
+
+.grassPlantaTwo{
+    background-position: -80px 0px !important;
+}
+
+.grassPlantaOne{
+    background-position: -45px 0px !important;
+}
+
+.char{
+    position: absolute;
+    height: 124px;
+    width: 84px;
+    transform: scale(0.6) translateY(-54px) translateX(-40px);
+}
