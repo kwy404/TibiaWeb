@@ -3,26 +3,45 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-scripts": "4.0.3",
-    "socket.io-client": "^4.0.0",
-    "web-vitals": "^1.0.1"
+    "@beisen/tool-tip": "^0.1.102",
+    "@daym3l/react-profile-image": "^1.0.0",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "@u-wave/react-translate": "^1.2.0",
+    "axios": "^0.20.0",
+    "crypto-js": "^4.0.0",
+    "emoji-mart": "^3.0.0",
+    "jquery": "^3.5.1",
+    "peer": "^0.5.3",
+    "rc-tooltip": "^4.2.2",
+    "react": "^16.13.1",
+    "react-circular-progressbar": "^2.0.3",
+    "react-color": "^2.19.3",
+    "react-dom": "^16.13.1",
+    "react-draggable": "^4.4.3",
+    "react-dropzone": "^11.2.0",
+    "react-elastic-carousel": "^0.7.5",
+    "react-images-upload": "^1.2.8",
+    "react-kindness": "^0.5.0",
+    "react-kindness-beautified": "^0.5.9",
+    "react-loading-skeleton": "^2.1.1",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "3.4.3",
+    "react-toastify": "^6.0.8",
+    "small-tooltip": "^1.0.8",
+    "socket.io-client": "^2.3.0",
+    "styled-components": "^5.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build-no-sourcemap": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "extends": "react-app"
   },
   "browserslist": {
     "production": [
@@ -35,5 +54,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "jscrambler": "^5.5.13"
   }
 }
