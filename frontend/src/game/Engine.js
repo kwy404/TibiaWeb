@@ -1,8 +1,13 @@
 import React from 'react';
 import '../Engine.css';
+import { Socket } from 'socket.io-client';
 
 const mapaOne = require("./VilaregoMapa.js")
 const mapaOneMobs = require("./mapaVilaregoMobs.js")
+
+
+const socket = require("../socket.io").default
+
 var mobs = require("./Mobs")
 mobs = mobs.default
 
@@ -27,35 +32,69 @@ class Game extends React.Component {
       positionBonecoX: 0,
       possoAndar: true,
       mobs: mapaOneMobs.default,
-      mobsP: mobs
+      mobsP: mobs,
+      playersOnMap: [],
+      myId: ""
     }
   }
   componentDidMount(){
     console.info(`Game engine v${version}`)
     console.info(`Criado por Alexandre Silva`)
     this.moverMeuPersonagem()
+    //Cria conexão socket.io
+    const react = this
+    socket.emit("openConnect", true)
+    socket.on('newUser', data => {
+        var joined = this.state.playersOnMap.concat(data);
+        react.setState({ playersOnMap: joined })
+    })
+    socket.on('myId', id => {
+        react.setState({myId: id})
+    })
+    socket.on('loadUsers', data => {
+        react.setState({playersOnMap: data})
+    })
+    socket.on('moveChar', data => {
+        const found = react.state.playersOnMap.find(e => e.player == data.player)
+        console.log(found)
+        if(found){
+            const id = react.state.playersOnMap.indexOf(found)
+            var oldPlayersMap = react.state.playersOnMap
+            oldPlayersMap[id] = data
+            react.setState({playersOnMap: oldPlayersMap})
+        }
+    })
+    socket.on('myPos', data => {
+        react.setState({posicaoBonecoX: data.x})
+        react.setState({posicaoBonecoY: data.y})
+        react.removeMe()
+    })
   }
-  animaPersonagem(x, y){
-    const oldX = this.state.posicaoBonecoX
-    const oldY = this.state.posicaoBonecoY
-    var passos = x - oldX
-    var totalYAndados = 1
-    //Pra baixo
-    if(y == oldY && oldX <= x - 1){
-        const anima = setInterval(() => {
-            this.setState({posicaoBonecoX: x})
-            this.setState({posicaoBonecoX: oldY + totalYAndados + 2})
-            if(passos == totalYAndados){
-                clearInterval(anima)
-            } else{
-                totalYAndados++
-            }
-        }, 200);
+  moveRandomMobs(){
+      for(let i = 0; i < this.state.mobs.length; i++){
+          this.state.mobs.intervalIA = setInterval(() => {
+              
+          }, 400);
+      }
+  }
+  removeMe(){
+    const found = this.state.playersOnMap.find(e => e.player == this.state.myId)
+    if(found){
+        const id = this.state.playersOnMap.indexOf(found)
+        var oldP = this.state.playersOnMap
+        oldP.splice(id, 1)
+        this.setState({playersOnMap: oldP})
     }
+  }
+  movePersonagemEmit(){
+      socket.emit('newPosition', {
+        posicaoBonecoX: this.state.posicaoBonecoX,
+        posicaoBonecoY: this.state.posicaoBonecoY,
+        positionBonecoX: this.state.positionBonecoX
+      })
   }
   moverMeuPersonagem(){
     const react = this
-    
         setTimeout(() => {
             if(this.state.mapa != undefined && this.state.possoAndar){
                 // this.animaPersonagem(x, y)
@@ -66,36 +105,44 @@ class Game extends React.Component {
                         if(
                             react.state.mapa[react.state.posicaoBonecoX - 1][react.state.posicaoBonecoY] != -1 &&
                             react.state.posicaoBonecoX - 1 > 0 &&
-                            !react.state.mobs.find(e => e.includes(`${react.state.posicaoBonecoX - 1}/${react.state.posicaoBonecoY}`))
+                            !react.state.mobs.find(e => e.includes(`${react.state.posicaoBonecoX - 1}/${react.state.posicaoBonecoY}`)) &&
+                            !react.state.playersOnMap.find(e => e.posX == react.state.posicaoBonecoX - 1 && e.posY == react.state.posicaoBonecoY)
                             ){
                             this.setState({posicaoBonecoX: react.state.posicaoBonecoX -1})
+                            this.movePersonagemEmit()
                         }
                     } else if(key.key.toLowerCase() == 's'){
                         this.setState({positionBonecoX: -198})
                         if(
                             react.state.mapa[react.state.posicaoBonecoX + 1][react.state.posicaoBonecoY] != -1 &&
                             react.state.posicaoBonecoX + 1 < react.state.mapa.length -1 &&
-                            !react.state.mobs.find(e => e.includes(`${react.state.posicaoBonecoX + 1}/${react.state.posicaoBonecoY}`))
+                            !react.state.mobs.find(e => e.includes(`${react.state.posicaoBonecoX + 1}/${react.state.posicaoBonecoY}`)) &&
+                            !react.state.playersOnMap.find(e => e.posX == react.state.posicaoBonecoX + 1 && e.posY == react.state.posicaoBonecoY)
                             ){
                             this.setState({posicaoBonecoX: react.state.posicaoBonecoX + 1})
+                            this.movePersonagemEmit()
                         }
                     } else if(key.key.toLowerCase() == 'd'){
                         this.setState({positionBonecoX: 0})
                         if(
                             react.state.mapa[react.state.posicaoBonecoX][react.state.posicaoBonecoY + 1] != -1 &&
                             react.state.posicaoBonecoY + 1 < react.state.mapa[react.state.posicaoBonecoX].length -1 &&
-                            !react.state.mobs.find(e => e.includes(`${react.state.posicaoBonecoX}/${react.state.posicaoBonecoY + 1}`))
+                            !react.state.mobs.find(e => e.includes(`${react.state.posicaoBonecoX}/${react.state.posicaoBonecoY + 1}`)) &&
+                            !react.state.playersOnMap.find(e => e.posX == react.state.posicaoBonecoX && e.posY == react.state.posicaoBonecoY + 1)
                             ){
                             this.setState({posicaoBonecoY: react.state.posicaoBonecoY + 1})
+                            this.movePersonagemEmit()
                         }
                     } else if(key.key.toLowerCase() == 'a'){
                         this.setState({positionBonecoX: -95})
                         if(
                             react.state.mapa[react.state.posicaoBonecoX][react.state.posicaoBonecoY - 1] != -1 &&
                             react.state.posicaoBonecoY - 1 > 0 &&
-                            !react.state.mobs.find(e => e.includes(`${react.state.posicaoBonecoX}/${react.state.posicaoBonecoY - 1}`))
+                            !react.state.mobs.find(e => e.includes(`${react.state.posicaoBonecoX}/${react.state.posicaoBonecoY - 1}`)) &&
+                            !react.state.playersOnMap.find(e => e.posX == react.state.posicaoBonecoX && e.posY == react.state.posicaoBonecoY - 1)
                             ){
                             this.setState({posicaoBonecoY: react.state.posicaoBonecoY - 1})
+                            this.movePersonagemEmit()
                         }
                     }
                 })
@@ -148,10 +195,31 @@ class Game extends React.Component {
 
                                 </div>
                                 <span className="nameMob">
-                                    kaway404
+                                    {this.state.myId}
                                 </span>
                             </div>
                             }
+                            {/* Players on Map */}
+                            { this.state.playersOnMap.map((player, i) => 
+                            
+                            <div>
+                            {x == player.posX && y == player.posY &&
+                                <div 
+                                style={{
+                                    backgroundImage: "url(./sprites/char.png)",
+                                    backgroundPositionX: `${player.positionBoneco}px`
+                                }}
+                                className="char">
+                                    <div className="life">
+    
+                                    </div>
+                                    <span className="nameMob">
+                                        {player.player}
+                                    </span>
+                                </div>
+                                }
+                            </div>
+                            ) }
                             {/* Mobs */}
                             { 
                             this.state.mobs.map((item, i) => 

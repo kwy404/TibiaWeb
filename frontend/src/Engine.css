@@ -6,15 +6,13 @@
     overflow: hidden;
     left: 50%;
     top: 50%;
-    transform: translate(-50%, -50%) scale(1.2);
-    image-rendering: pixelated;
+    transform: translate(-50%, -50%);
 }
 
 .overflowEngine{
     width: 1600px !important;
     height: 1560px  !important;
     position: absolute;
-    transition: 0.6s ease;
 }
 
 .gameEngine .tile{
