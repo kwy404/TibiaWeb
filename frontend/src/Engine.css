@@ -11,8 +11,18 @@
 
 .overflowEngine{
     width: 1600px !important;
-    height: 1560px  !important;
+    height: 21560px  !important;
     position: absolute;
+}
+
+.gameEngine .message{
+    margin-top: -50px !important;
+}
+
+.gameEngine .message span{
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 9px !important;
 }
 
 .gameEngine .tile{

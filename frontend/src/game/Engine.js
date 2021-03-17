@@ -4,11 +4,12 @@ import { Socket } from 'socket.io-client';
 
 const mapaOne = require("./VilaregoMapa.js")
 const mapaOneMobs = require("./mapaVilaregoMobs.js")
-
+let Movement = require("./Movement")
+Movement = Movement.default
 
 const socket = require("../socket.io").default
 
-var mobs = require("./Mobs")
+let mobs = require("./Mobs")
 mobs = mobs.default
 
 const version = 0.1
@@ -40,7 +41,7 @@ class Game extends React.Component {
   componentDidMount(){
     console.info(`Game engine v${version}`)
     console.info(`Criado por Alexandre Silva`)
-    this.moverMeuPersonagem()
+    Movement.moverMeuPersonagem(this, Movement.movePersonagemEmit)
     //Cria conexão socket.io
     const react = this
     socket.emit("openConnect", true)
@@ -65,6 +66,7 @@ class Game extends React.Component {
             var oldPlayersMap = react.state.playersOnMap
             oldPlayersMap[id] = data
             react.setState({playersOnMap: oldPlayersMap})
+            react.setState({})
         }
     })
     socket.on('myPos', data => {
@@ -89,72 +91,6 @@ class Game extends React.Component {
         this.setState({playersOnMap: oldP})
     }
   }
-  movePersonagemEmit(){
-      socket.emit('newPosition', {
-        posicaoBonecoX: this.state.posicaoBonecoX,
-        posicaoBonecoY: this.state.posicaoBonecoY,
-        positionBonecoX: this.state.positionBonecoX
-      })
-  }
-  moverMeuPersonagem(){
-    const react = this
-        setTimeout(() => {
-            if(this.state.mapa != undefined && this.state.possoAndar){
-                // this.animaPersonagem(x, y)
-                document.getElementsByTagName("body")[0].addEventListener("keyup", (key) => {
-                    this.setState({possoAndar: false})
-                    if(key.key.toLowerCase() == 'w'){
-                        this.setState({positionBonecoX: -325})
-                        if(
-                            react.state.mapa[react.state.posicaoBonecoX - 1][react.state.posicaoBonecoY] != -1 &&
-                            react.state.posicaoBonecoX - 1 > 0 &&
-                            !react.state.mobs.find(e => e.includes(`${react.state.posicaoBonecoX - 1}/${react.state.posicaoBonecoY}`)) &&
-                            !react.state.playersOnMap.find(e => e.posX == react.state.posicaoBonecoX - 1 && e.posY == react.state.posicaoBonecoY)
-                            ){
-                            this.setState({posicaoBonecoX: react.state.posicaoBonecoX -1})
-                            this.movePersonagemEmit()
-                        }
-                    } else if(key.key.toLowerCase() == 's'){
-                        this.setState({positionBonecoX: -198})
-                        if(
-                            react.state.mapa[react.state.posicaoBonecoX + 1][react.state.posicaoBonecoY] != -1 &&
-                            react.state.posicaoBonecoX + 1 < react.state.mapa.length -1 &&
-                            !react.state.mobs.find(e => e.includes(`${react.state.posicaoBonecoX + 1}/${react.state.posicaoBonecoY}`)) &&
-                            !react.state.playersOnMap.find(e => e.posX == react.state.posicaoBonecoX + 1 && e.posY == react.state.posicaoBonecoY)
-                            ){
-                            this.setState({posicaoBonecoX: react.state.posicaoBonecoX + 1})
-                            this.movePersonagemEmit()
-                        }
-                    } else if(key.key.toLowerCase() == 'd'){
-                        this.setState({positionBonecoX: 0})
-                        if(
-                            react.state.mapa[react.state.posicaoBonecoX][react.state.posicaoBonecoY + 1] != -1 &&
-                            react.state.posicaoBonecoY + 1 < react.state.mapa[react.state.posicaoBonecoX].length -1 &&
-                            !react.state.mobs.find(e => e.includes(`${react.state.posicaoBonecoX}/${react.state.posicaoBonecoY + 1}`)) &&
-                            !react.state.playersOnMap.find(e => e.posX == react.state.posicaoBonecoX && e.posY == react.state.posicaoBonecoY + 1)
-                            ){
-                            this.setState({posicaoBonecoY: react.state.posicaoBonecoY + 1})
-                            this.movePersonagemEmit()
-                        }
-                    } else if(key.key.toLowerCase() == 'a'){
-                        this.setState({positionBonecoX: -95})
-                        if(
-                            react.state.mapa[react.state.posicaoBonecoX][react.state.posicaoBonecoY - 1] != -1 &&
-                            react.state.posicaoBonecoY - 1 > 0 &&
-                            !react.state.mobs.find(e => e.includes(`${react.state.posicaoBonecoX}/${react.state.posicaoBonecoY - 1}`)) &&
-                            !react.state.playersOnMap.find(e => e.posX == react.state.posicaoBonecoX && e.posY == react.state.posicaoBonecoY - 1)
-                            ){
-                            this.setState({posicaoBonecoY: react.state.posicaoBonecoY - 1})
-                            this.movePersonagemEmit()
-                        }
-                    }
-                })
-                setTimeout(() => {
-                    this.setState({possoAndar: true})
-                }, 2600);
-            }
-        }, 400);
-  }
   attackMob(mob){
       if(mob.split("/")[0] == this.state.posicaoBonecoX 
       || mob.split("/")[0] == this.state.posicaoBonecoX &&
@@ -174,6 +110,7 @@ class Game extends React.Component {
             this.state.mapa.map((item, x) => ( 
                 <div>
                     {item.map((itemTwo, y) => (
+                    x <= this.state.posicaoBonecoX + 6 && y < this.state.posicaoBonecoY + 50 &&
                     <div className="tileY">
                         <div
                         data-tile-id={`${x}/${y}`}
@@ -195,8 +132,10 @@ class Game extends React.Component {
                             }}
                             className="char">
                                 <div className="life">
-
                                 </div>
+                                {/* <span className="nameMob message">
+                                    <span>Falando => </span> Aloo
+                                </span> */}
                                 <span className="nameMob">
                                     {this.state.myId}
                                 </span>
