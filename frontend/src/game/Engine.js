@@ -21,8 +21,6 @@ const version = 0.1
 // 3 = pedra
 // -1 = agua
 
-const agua = {x: 0, y: 0}
-
 class Game extends React.Component {
   constructor(props) {
     super(props);
@@ -107,10 +105,9 @@ class Game extends React.Component {
        style={{transform: `translate(${((this.state.posicaoBonecoY * 40) * -1) + 255}px, ${((this.state.posicaoBonecoX * 40) * -1) + 305}px)`}}
        className="overflowEngine">
            { 
-            this.state.mapa.map((item, x) => ( 
+            this.state.mapa.map((item, x) => (
                 <div>
                     {item.map((itemTwo, y) => (
-                    x <= this.state.posicaoBonecoX + 6 && y < this.state.posicaoBonecoY + 50 &&
                     <div className="tileY">
                         <div
                         data-tile-id={`${x}/${y}`}
